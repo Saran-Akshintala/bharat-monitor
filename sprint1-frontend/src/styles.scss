@@ -1,0 +1,183 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Custom Material Design Theme Colors */
+.mat-primary {
+  background-color: #1976d2 !important;
+  color: white !important;
+}
+
+.mat-accent {
+  background-color: #ff4081 !important;
+  color: white !important;
+}
+
+.mat-warn {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+/* Status Colors */
+.status-up {
+  color: #4caf50;
+}
+
+.status-down {
+  color: #f44336;
+}
+
+.status-pending {
+  color: #ff9800;
+}
+
+/* Utility Classes */
+.full-width {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-2 {
+  margin-top: 16px;
+}
+
+.mb-2 {
+  margin-bottom: 16px;
+}
+
+.p-2 {
+  padding: 16px;
+}
+
+/* Card Styles */
+.monitor-card {
+  margin-bottom: 16px;
+  transition: box-shadow 0.2s ease;
+}
+
+.monitor-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+}
+
+/* Form Styles */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 20px;
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 300;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Monitor List Styles */
+.monitor-list {
+  margin-top: 24px;
+}
+
+.monitor-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-left: 4px solid #1976d2;
+}
+
+.monitor-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
+}
+
+.monitor-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.monitor-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-badge.up {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+.status-badge.down {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-badge.pending {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 16px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .monitor-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .monitor-status {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # MongoDB Database for Development
+  mongodb:
+    image: mongo:7.0
+    container_name: bharat-monitor-db-dev
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: bharat-monitor
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_dev_data:/data/db
+    networks:
+      - bharat-monitor-dev-network
+
+  # Development - Backend only (Frontend runs separately)
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: bharat-monitor-app-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      MONGODB_URI: mongodb://admin:password123@mongodb:27017/bharat-monitor?authSource=admin
+      JWT_SECRET: dev-jwt-secret-key
+      JWT_EXPIRES_IN: 7d
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - bharat-monitor-dev-network
+    command: npm run start:dev
+
+volumes:
+  mongodb_dev_data:
+    driver: local
+
+networks:
+  bharat-monitor-dev-network:
+    driver: bridge

@@ -1,0 +1,145 @@
+<div class="alerts-container">
+  <div class="alerts-header">
+    <h1>Alerts</h1>
+    <button mat-icon-button (click)="refresh()" [disabled]="loading">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  <!-- Alert Statistics -->
+  <div class="stats-section" *ngIf="alertStats">
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-number">{{ alertStats.totalAlerts }}</div>
+          <div class="stat-label">Total Alerts</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card sent-card">
+        <mat-card-content>
+          <div class="stat-number status-sent">{{ alertStats.sentAlerts }}</div>
+          <div class="stat-label">Sent Successfully</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card failed-card">
+        <mat-card-content>
+          <div class="stat-number status-failed">{{ alertStats.failedAlerts }}</div>
+          <div class="stat-label">Failed</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-number">{{ alertStats.successRate?.toFixed(1) || 0 }}%</div>
+          <div class="stat-label">Success Rate</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <mat-card class="alerts-card">
+    <mat-card-content>
+      <!-- Search Filter -->
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search alerts</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Filter by monitor or message">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <!-- Alerts Table -->
+      <div *ngIf="!loading" class="table-container">
+        <table mat-table [dataSource]="dataSource" matSort class="alerts-table">
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+            <td mat-cell *matCellDef="let alert">
+              <div class="status-cell">
+                <mat-icon [ngClass]="getStatusClass(alert.status)">
+                  {{ getStatusIcon(alert.status) }}
+                </mat-icon>
+                <span class="status-text" [ngClass]="getStatusClass(alert.status)">
+                  {{ alert.status | titlecase }}
+                </span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Monitor Column -->
+          <ng-container matColumnDef="monitor">
+            <th mat-header-cell *matHeaderCellDef>Monitor</th>
+            <td mat-cell *matCellDef="let alert">
+              <div class="monitor-cell">
+                <span class="monitor-name">{{ alert.monitorId?.name || 'Unknown' }}</span>
+                <span class="monitor-url">{{ alert.monitorId?.url || '' }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Type Column -->
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+            <td mat-cell *matCellDef="let alert">
+              <div class="type-cell">
+                <mat-icon>{{ getTypeIcon(alert.type) }}</mat-icon>
+                <span>{{ alert.type | titlecase }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Message Column -->
+          <ng-container matColumnDef="message">
+            <th mat-header-cell *matHeaderCellDef>Message</th>
+            <td mat-cell *matCellDef="let alert">
+              <div class="message-cell">
+                <span class="message-text">{{ alert.message }}</span>
+                <span *ngIf="alert.errorMessage" class="error-text">
+                  Error: {{ alert.errorMessage }}
+                </span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Triggered At Column -->
+          <ng-container matColumnDef="triggeredAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Triggered</th>
+            <td mat-cell *matCellDef="let alert">
+              {{ formatDate(alert.triggeredAt) }}
+            </td>
+          </ng-container>
+
+          <!-- Recipient Column -->
+          <ng-container matColumnDef="recipient">
+            <th mat-header-cell *matHeaderCellDef>Recipient</th>
+            <td mat-cell *matCellDef="let alert">
+              <span class="recipient-text">{{ alert.recipient }}</span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="alert-row"></tr>
+        </table>
+
+        <!-- No Data Message -->
+        <div *ngIf="dataSource.data.length === 0" class="no-data">
+          <mat-icon>notifications_off</mat-icon>
+          <h3>No alerts found</h3>
+          <p>When your monitors detect issues, alerts will appear here.</p>
+        </div>
+
+        <!-- Paginator -->
+        <mat-paginator 
+          *ngIf="dataSource.data.length > 0"
+          [pageSizeOptions]="[10, 25, 50, 100]"
+          showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

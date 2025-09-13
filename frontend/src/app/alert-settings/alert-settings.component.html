@@ -1,0 +1,136 @@
+<div class="alert-settings-container">
+  <mat-card>
+    <mat-card-header>
+      <div class="header-with-back">
+        <button mat-icon-button routerLink="/dashboard" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-content">
+          <mat-card-title>
+            <mat-icon>notifications</mat-icon>
+            Alert Settings
+          </mat-card-title>
+          <mat-card-subtitle>
+            Configure your notification preferences for monitor alerts
+          </mat-card-subtitle>
+        </div>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="alertForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Email Settings -->
+        <div class="alert-channel-section">
+          <div class="channel-header">
+            <mat-icon>email</mat-icon>
+            <h3>Email Notifications</h3>
+            <mat-slide-toggle formControlName="emailEnabled" color="primary">
+              {{ alertForm.get('emailEnabled')?.value ? 'Enabled' : 'Disabled' }}
+            </mat-slide-toggle>
+          </div>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput formControlName="email" type="email" placeholder="your@email.com">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="alertForm.get('email')?.hasError('email')">
+              Please enter a valid email address
+            </mat-error>
+          </mat-form-field>
+
+          <button mat-stroked-button type="button" 
+                  [disabled]="!alertForm.get('emailEnabled')?.value || !alertForm.get('email')?.valid"
+                  (click)="testAlert('email')" class="test-button">
+            <mat-icon>send</mat-icon>
+            Send Test Email
+          </button>
+        </div>
+
+        <!-- WhatsApp Settings -->
+        <div class="alert-channel-section">
+          <div class="channel-header">
+            <mat-icon>chat</mat-icon>
+            <h3>WhatsApp Notifications</h3>
+            <mat-slide-toggle formControlName="whatsappEnabled" color="primary">
+              {{ alertForm.get('whatsappEnabled')?.value ? 'Enabled' : 'Disabled' }}
+            </mat-slide-toggle>
+          </div>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>WhatsApp Number</mat-label>
+            <input matInput formControlName="whatsapp" placeholder="+1234567890">
+            <mat-icon matSuffix>phone</mat-icon>
+            <mat-hint>Include country code (e.g., +1234567890)</mat-hint>
+          </mat-form-field>
+
+          <button mat-stroked-button type="button" 
+                  [disabled]="!alertForm.get('whatsappEnabled')?.value || !alertForm.get('whatsapp')?.value"
+                  (click)="testAlert('whatsapp')" class="test-button">
+            <mat-icon>send</mat-icon>
+            Send Test WhatsApp
+          </button>
+        </div>
+
+        <!-- Slack Settings -->
+        <div class="alert-channel-section">
+          <div class="channel-header">
+            <mat-icon>work</mat-icon>
+            <h3>Slack Notifications</h3>
+            <mat-slide-toggle formControlName="slackEnabled" color="primary">
+              {{ alertForm.get('slackEnabled')?.value ? 'Enabled' : 'Disabled' }}
+            </mat-slide-toggle>
+          </div>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Slack Webhook URL</mat-label>
+            <input matInput formControlName="slack" placeholder="https://hooks.slack.com/services/...">
+            <mat-icon matSuffix>link</mat-icon>
+            <mat-hint>Get this from your Slack app's incoming webhooks</mat-hint>
+          </mat-form-field>
+
+          <button mat-stroked-button type="button" 
+                  [disabled]="!alertForm.get('slackEnabled')?.value || !alertForm.get('slack')?.value"
+                  (click)="testAlert('slack')" class="test-button">
+            <mat-icon>send</mat-icon>
+            Send Test Slack Message
+          </button>
+        </div>
+
+        <!-- Teams Settings -->
+        <div class="alert-channel-section">
+          <div class="channel-header">
+            <mat-icon>groups</mat-icon>
+            <h3>Microsoft Teams Notifications</h3>
+            <mat-slide-toggle formControlName="teamsEnabled" color="primary">
+              {{ alertForm.get('teamsEnabled')?.value ? 'Enabled' : 'Disabled' }}
+            </mat-slide-toggle>
+          </div>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Teams Webhook URL</mat-label>
+            <input matInput formControlName="teams" placeholder="https://outlook.office.com/webhook/...">
+            <mat-icon matSuffix>link</mat-icon>
+            <mat-hint>Get this from your Teams channel connector</mat-hint>
+          </mat-form-field>
+
+          <button mat-stroked-button type="button" 
+                  [disabled]="!alertForm.get('teamsEnabled')?.value || !alertForm.get('teams')?.value"
+                  (click)="testAlert('teams')" class="test-button">
+            <mat-icon>send</mat-icon>
+            Send Test Teams Message
+          </button>
+        </div>
+
+        <!-- Save Button -->
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" 
+                  [disabled]="alertForm.invalid || loading">
+            <mat-icon>save</mat-icon>
+            {{ loading ? 'Saving...' : 'Save Settings' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

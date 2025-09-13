@@ -1,0 +1,161 @@
+<div class="monitors-container">
+  <div class="monitors-header">
+    <h1>Monitors</h1>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="addMonitor()">
+        <mat-icon>add</mat-icon>
+        Add Monitor
+      </button>
+      <button mat-icon-button (click)="refresh()" [disabled]="loading">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-card class="monitors-card">
+    <mat-card-content>
+      <!-- Search Filter -->
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search monitors</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Filter by name or URL">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <!-- Monitors Table -->
+      <div *ngIf="!loading" class="table-container">
+        <table mat-table [dataSource]="dataSource" matSort class="monitors-table">
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+            <td mat-cell *matCellDef="let monitor">
+              <div class="status-cell">
+                <mat-icon [ngClass]="getStatusClass(monitor.currentStatus)">
+                  {{ getStatusIcon(monitor.currentStatus) }}
+                </mat-icon>
+                <span class="status-text" [ngClass]="getStatusClass(monitor.currentStatus)">
+                  {{ monitor.currentStatus | titlecase }}
+                </span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+            <td mat-cell *matCellDef="let monitor">
+              <div class="name-cell">
+                <span class="monitor-name">{{ monitor.name }}</span>
+                <mat-chip class="type-chip" [color]="monitor.type === 'website' ? 'primary' : 'accent'">
+                  {{ monitor.type | uppercase }}
+                </mat-chip>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- URL Column -->
+          <ng-container matColumnDef="url">
+            <th mat-header-cell *matHeaderCellDef>URL</th>
+            <td mat-cell *matCellDef="let monitor">
+              <a [href]="monitor.url" target="_blank" class="url-link">
+                {{ monitor.url }}
+                <mat-icon class="external-link">open_in_new</mat-icon>
+              </a>
+            </td>
+          </ng-container>
+
+          <!-- Type Column -->
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+            <td mat-cell *matCellDef="let monitor">
+              {{ monitor.type | titlecase }}
+            </td>
+          </ng-container>
+
+          <!-- Uptime Column -->
+          <ng-container matColumnDef="uptime">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Uptime</th>
+            <td mat-cell *matCellDef="let monitor">
+              <div class="uptime-cell">
+                <span class="uptime-percentage">{{ formatUptime(monitor.uptimePercentage) }}</span>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="monitor.uptimePercentage || 0"
+                  class="uptime-bar">
+                </mat-progress-bar>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Response Time Column -->
+          <ng-container matColumnDef="responseTime">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Response Time</th>
+            <td mat-cell *matCellDef="let monitor">
+              {{ formatResponseTime(monitor.responseTime) }}
+            </td>
+          </ng-container>
+
+          <!-- Last Checked Column -->
+          <ng-container matColumnDef="lastChecked">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Checked</th>
+            <td mat-cell *matCellDef="let monitor">
+              {{ formatDate(monitor.lastCheckedAt) }}
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let monitor">
+              <button mat-icon-button [matMenuTriggerFor]="actionMenu" [matTooltip]="'Actions'">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #actionMenu="matMenu">
+                <button mat-menu-item (click)="viewMonitor(monitor)">
+                  <mat-icon>visibility</mat-icon>
+                  <span>View Details</span>
+                </button>
+                <button mat-menu-item (click)="editMonitor(monitor)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+                <mat-divider></mat-divider>
+                <button mat-menu-item (click)="deleteMonitor(monitor)" class="delete-action">
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete</span>
+                </button>
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+              (click)="viewMonitor(row)" 
+              class="monitor-row"></tr>
+        </table>
+
+        <!-- No Data Message -->
+        <div *ngIf="dataSource.data.length === 0" class="no-data">
+          <mat-icon>monitor</mat-icon>
+          <h3>No monitors found</h3>
+          <p>Create your first monitor to start tracking website and API uptime.</p>
+          <button mat-raised-button color="primary" (click)="addMonitor()">
+            <mat-icon>add</mat-icon>
+            Add Monitor
+          </button>
+        </div>
+
+        <!-- Paginator -->
+        <mat-paginator 
+          *ngIf="dataSource.data.length > 0"
+          [pageSizeOptions]="[5, 10, 25, 100]"
+          showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

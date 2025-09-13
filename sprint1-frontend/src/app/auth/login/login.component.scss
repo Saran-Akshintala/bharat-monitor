@@ -1,0 +1,100 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.auth-card mat-card-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.auth-card mat-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1.5rem;
+  color: #1976d2;
+}
+
+.auth-card mat-form-field {
+  margin-bottom: 16px;
+}
+
+.auth-card button {
+  margin-top: 16px;
+  height: 48px;
+}
+
+.demo-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.demo-card {
+  background-color: #f8f9fa;
+  border-left: 4px solid #1976d2;
+}
+
+.demo-card:nth-child(2) {
+  border-left-color: #ff4081;
+}
+
+.demo-card h4 {
+  margin: 0 0 8px 0;
+  color: #1976d2;
+  font-size: 0.9rem;
+}
+
+.demo-card:nth-child(2) h4 {
+  color: #ff4081;
+}
+
+.demo-card p {
+  margin: 2px 0;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.demo-card button {
+  margin-top: 8px;
+  width: 100%;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 480px) {
+  .demo-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+mat-card-actions {
+  justify-content: center;
+}
+
+mat-card-actions p {
+  margin: 0;
+  color: #666;
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 16px;
+  }
+  
+  .auth-card {
+    max-width: 100%;
+  }
+}

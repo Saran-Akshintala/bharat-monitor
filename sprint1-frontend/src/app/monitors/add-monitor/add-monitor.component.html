@@ -1,0 +1,104 @@
+<div class="add-monitor-container">
+  <!-- Header -->
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="cancel()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span>Add New Monitor</span>
+  </mat-toolbar>
+
+  <!-- Form -->
+  <div class="form-container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Monitor Configuration</mat-card-title>
+        <mat-card-subtitle>Set up monitoring for your website or API</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="monitorForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Monitor Name</mat-label>
+            <input matInput formControlName="name" placeholder="e.g., My Website">
+            <mat-hint>A friendly name to identify this monitor</mat-hint>
+            <mat-error *ngIf="monitorForm.get('name')?.invalid && monitorForm.get('name')?.touched">
+              {{ getErrorMessage('name') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>URL</mat-label>
+            <input matInput formControlName="url" placeholder="https://example.com">
+            <mat-icon matSuffix>link</mat-icon>
+            <mat-hint>The URL to monitor (must start with http:// or https://)</mat-hint>
+            <mat-error *ngIf="monitorForm.get('url')?.invalid && monitorForm.get('url')?.touched">
+              {{ getErrorMessage('url') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Monitor Type</mat-label>
+            <mat-select formControlName="type">
+              <mat-option *ngFor="let type of monitorTypes" [value]="type.value">
+                {{ type.label }}
+              </mat-option>
+            </mat-select>
+            <mat-hint>Choose the type of monitoring</mat-hint>
+            <mat-error *ngIf="monitorForm.get('type')?.invalid && monitorForm.get('type')?.touched">
+              {{ getErrorMessage('type') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Check Interval</mat-label>
+            <mat-select formControlName="interval">
+              <mat-option *ngFor="let interval of intervals" [value]="interval.value">
+                {{ interval.label }}
+              </mat-option>
+            </mat-select>
+            <mat-hint>How often to check the monitor</mat-hint>
+            <mat-error *ngIf="monitorForm.get('interval')?.invalid && monitorForm.get('interval')?.touched">
+              {{ getErrorMessage('interval') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Preview Card -->
+          <mat-card class="preview-card" *ngIf="monitorForm.get('name')?.value || monitorForm.get('url')?.value">
+            <mat-card-header>
+              <mat-card-title>Preview</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="preview-item">
+                <strong>Name:</strong> {{ monitorForm.get('name')?.value || 'Untitled Monitor' }}
+              </div>
+              <div class="preview-item">
+                <strong>URL:</strong> {{ monitorForm.get('url')?.value || 'No URL specified' }}
+              </div>
+              <div class="preview-item">
+                <strong>Type:</strong> {{ (monitorTypes.find(t => t.value === monitorForm.get('type')?.value))?.label }}
+              </div>
+              <div class="preview-item">
+                <strong>Interval:</strong> {{ (intervals.find(i => i.value === monitorForm.get('interval')?.value))?.label }}
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </form>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button (click)="cancel()" [disabled]="loading">
+          Cancel
+        </button>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="onSubmit()"
+          [disabled]="monitorForm.invalid || loading">
+          <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+          <span *ngIf="!loading">Create Monitor</span>
+          <span *ngIf="loading">Creating...</span>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

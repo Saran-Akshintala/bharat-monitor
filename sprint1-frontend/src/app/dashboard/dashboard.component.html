@@ -1,0 +1,132 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <mat-toolbar color="primary">
+    <mat-icon>monitor</mat-icon>
+    <span>Bharat Monitor</span>
+    <span class="spacer"></span>
+    <div *ngIf="currentUser" class="user-info">
+      <span class="welcome-text">Welcome, {{ currentUser.firstName }}!</span>
+      <mat-chip-list>
+        <mat-chip [color]="currentUser.role === 'admin' ? 'accent' : 'primary'" selected>
+          {{ currentUser.role | titlecase }}
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <div mat-menu-item disabled class="user-menu-info">
+        <div>{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
+        <div class="user-email">{{ currentUser?.email }}</div>
+      </div>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-number">{{ totalMonitors }}</div>
+        <div class="stat-label">Total Monitors</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-number status-up">{{ upMonitors }}</div>
+        <div class="stat-label">Up</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-number status-down">{{ downMonitors }}</div>
+        <div class="stat-label">Down</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-number status-pending">{{ pendingMonitors }}</div>
+        <div class="stat-label">Pending</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Add Monitor Button -->
+  <div class="add-monitor-section">
+    <button mat-raised-button color="primary" (click)="addMonitor()">
+      <mat-icon>add</mat-icon>
+      Add New Monitor
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading monitors...</p>
+  </div>
+
+  <!-- Monitors List -->
+  <div *ngIf="!loading" class="monitor-list">
+    <h2 *ngIf="monitors.length > 0">Your Monitors</h2>
+    
+    <!-- Empty State -->
+    <mat-card *ngIf="monitors.length === 0" class="empty-state">
+      <mat-card-content>
+        <mat-icon>monitor_heart</mat-icon>
+        <h3>No monitors yet</h3>
+        <p>Get started by adding your first website or API monitor</p>
+        <button mat-raised-button color="primary" (click)="addMonitor()">
+          <mat-icon>add</mat-icon>
+          Add Your First Monitor
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Monitor Cards -->
+    <mat-card *ngFor="let monitor of monitors" class="monitor-card">
+      <mat-card-content>
+        <div class="monitor-item">
+          <div class="monitor-info">
+            <h3>{{ monitor.name }}</h3>
+            <p>{{ monitor.url }}</p>
+            <div class="monitor-meta">
+              <span class="monitor-type">{{ monitor.type | titlecase }}</span>
+              <span class="monitor-interval">{{ monitor.interval }}min interval</span>
+            </div>
+          </div>
+          
+          <div class="monitor-status">
+            <div class="status-info">
+              <span class="status-badge" [class]="monitor.status">
+                {{ monitor.status | titlecase }}
+              </span>
+              <div class="status-details">
+                <small *ngIf="monitor.lastResponseTime">
+                  {{ formatResponseTime(monitor.lastResponseTime) }}
+                </small>
+                <small *ngIf="monitor.lastStatusCode">
+                  HTTP {{ monitor.lastStatusCode }}
+                </small>
+                <small>
+                  Last checked: {{ formatDate(monitor.lastCheckedAt) }}
+                </small>
+              </div>
+            </div>
+            
+            <button mat-icon-button color="warn" (click)="deleteMonitor(monitor)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

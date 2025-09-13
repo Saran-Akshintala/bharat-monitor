@@ -1,0 +1,171 @@
+<div class="reports-container">
+  <div class="reports-header">
+    <h1>Reports</h1>
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="period-selector">
+        <mat-label>Report Period</mat-label>
+        <mat-select [(value)]="selectedPeriod" (selectionChange)="onPeriodChange()">
+          <mat-option *ngFor="let option of periodOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-icon-button (click)="refresh()" [disabled]="loading">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Export Actions -->
+  <mat-card class="export-card">
+    <mat-card-header>
+      <mat-card-title>Export Reports</mat-card-title>
+      <mat-card-subtitle>Download uptime reports in different formats</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="export-actions">
+        <button mat-raised-button color="primary" (click)="downloadCSV()" [disabled]="loading">
+          <mat-icon>file_download</mat-icon>
+          Download CSV
+        </button>
+        <button mat-raised-button color="accent" (click)="downloadPDF()" [disabled]="loading">
+          <mat-icon>picture_as_pdf</mat-icon>
+          Download PDF
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading report data...</p>
+  </div>
+
+  <!-- Report Data -->
+  <div *ngIf="!loading && reportData" class="report-content">
+    <!-- Summary Statistics -->
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>Summary Statistics</mat-card-title>
+        <mat-card-subtitle>{{ reportData.period }} overview</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-number">{{ reportData.summary.totalMonitors }}</div>
+            <div class="summary-label">Total Monitors</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-number status-up">{{ reportData.summary.upMonitors }}</div>
+            <div class="summary-label">Currently Up</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-number status-down">{{ reportData.summary.downMonitors }}</div>
+            <div class="summary-label">Currently Down</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-number status-degraded">{{ reportData.summary.degradedMonitors }}</div>
+            <div class="summary-label">Currently Degraded</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-number">{{ formatUptime(reportData.summary.avgUptimePercentage) }}</div>
+            <div class="summary-label">Average Uptime</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Monitor Details -->
+    <mat-card class="monitors-report-card">
+      <mat-card-header>
+        <mat-card-title>Monitor Performance Report</mat-card-title>
+        <mat-card-subtitle>Detailed statistics for each monitor</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="monitors-report-list">
+          <div *ngFor="let monitorReport of reportData.monitors" class="monitor-report-item">
+            <div class="monitor-header">
+              <div class="monitor-info">
+                <h3>{{ monitorReport.monitor.name }}</h3>
+                <p class="monitor-url">{{ monitorReport.monitor.url }}</p>
+              </div>
+              <div class="monitor-status">
+                <span class="status-badge" [ngClass]="getStatusClass(monitorReport.monitor.currentStatus)">
+                  {{ monitorReport.monitor.currentStatus | titlecase }}
+                </span>
+              </div>
+            </div>
+
+            <div class="monitor-stats">
+              <div class="stat-grid">
+                <div class="stat-item">
+                  <div class="stat-value">{{ formatUptime(monitorReport.stats.uptimePercentage) }}</div>
+                  <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">{{ monitorReport.stats.totalChecks }}</div>
+                  <div class="stat-label">Total Checks</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value status-up">{{ monitorReport.stats.upChecks }}</div>
+                  <div class="stat-label">Successful</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value status-down">{{ monitorReport.stats.downChecks }}</div>
+                  <div class="stat-label">Failed</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">{{ monitorReport.stats.avgResponseTime }}ms</div>
+                  <div class="stat-label">Avg Response Time</div>
+                </div>
+              </div>
+
+              <!-- Uptime Progress Bar -->
+              <div class="uptime-progress">
+                <div class="progress-label">
+                  <span>Uptime: {{ formatUptime(monitorReport.stats.uptimePercentage) }}</span>
+                </div>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="monitorReport.stats.uptimePercentage"
+                  [color]="monitorReport.stats.uptimePercentage >= 99 ? 'primary' : monitorReport.stats.uptimePercentage >= 95 ? 'accent' : 'warn'">
+                </mat-progress-bar>
+              </div>
+
+              <!-- Recent Activity -->
+              <div class="recent-activity" *ngIf="monitorReport.recentLogs && monitorReport.recentLogs.length > 0">
+                <h4>Recent Activity</h4>
+                <div class="activity-timeline">
+                  <div *ngFor="let log of monitorReport.recentLogs.slice(0, 5)" class="activity-item">
+                    <div class="activity-status" [ngClass]="getStatusClass(log.status)">
+                      <div class="status-dot"></div>
+                    </div>
+                    <div class="activity-details">
+                      <div class="activity-time">{{ log.checkedAt | date:'short' }}</div>
+                      <div class="activity-info">
+                        <span class="response-time">{{ log.responseTime }}ms</span>
+                        <span *ngIf="log.statusCode" class="status-code">HTTP {{ log.statusCode }}</span>
+                        <span *ngIf="log.errorMessage" class="error-message">{{ log.errorMessage }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Monitors Message -->
+        <div *ngIf="reportData.monitors.length === 0" class="no-monitors">
+          <mat-icon>assessment</mat-icon>
+          <h3>No monitor data available</h3>
+          <p>Create monitors to start generating reports.</p>
+          <button mat-raised-button color="primary" routerLink="/monitors/new">
+            Create Monitor
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

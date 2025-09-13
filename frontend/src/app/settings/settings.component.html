@@ -1,0 +1,214 @@
+<div class="settings-container">
+  <div class="settings-header">
+    <h1>Settings</h1>
+  </div>
+
+  <div class="settings-content">
+    <!-- Profile Settings -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>Profile Information</mat-card-title>
+        <mat-card-subtitle>Update your personal information</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName">
+              <mat-error *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched">
+                {{ getErrorMessage('firstName', profileForm) }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName">
+              <mat-error *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched">
+                {{ getErrorMessage('lastName', profileForm) }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email">
+            <mat-error *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+              {{ getErrorMessage('email', profileForm) }}
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit" 
+                    [disabled]="profileForm.invalid || loading">
+              <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+              <span *ngIf="!loading">Update Profile</span>
+              <span *ngIf="loading">Updating...</span>
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Alert Preferences -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>Alert Preferences</mat-card-title>
+        <mat-card-subtitle>Configure how you want to receive alerts</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="alertForm" (ngSubmit)="updateAlertPreferences()">
+          <!-- Email Alerts -->
+          <div class="alert-section">
+            <div class="alert-header">
+              <mat-slide-toggle formControlName="emailAlertsEnabled">
+                <mat-icon>email</mat-icon>
+                Email Alerts
+              </mat-slide-toggle>
+              <button mat-button type="button" (click)="testAlert('email')" 
+                      [disabled]="!alertForm.get('emailAlertsEnabled')?.value">
+                Test
+              </button>
+            </div>
+            <p class="alert-description">
+              Receive alerts via email using SendGrid integration.
+            </p>
+          </div>
+
+          <!-- WhatsApp Alerts -->
+          <div class="alert-section">
+            <div class="alert-header">
+              <mat-slide-toggle formControlName="whatsappAlertsEnabled">
+                <mat-icon>chat</mat-icon>
+                WhatsApp Alerts
+              </mat-slide-toggle>
+              <button mat-button type="button" (click)="testAlert('WhatsApp')" 
+                      [disabled]="!alertForm.get('whatsappAlertsEnabled')?.value">
+                Test
+              </button>
+            </div>
+            <p class="alert-description">
+              Receive alerts via WhatsApp using Meta WhatsApp Cloud API.
+            </p>
+            <mat-form-field appearance="outline" class="full-width" 
+                            *ngIf="alertForm.get('whatsappAlertsEnabled')?.value">
+              <mat-label>WhatsApp Number</mat-label>
+              <input matInput formControlName="whatsappNumber" placeholder="+1234567890">
+              <mat-hint>Include country code (e.g., +1234567890)</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <!-- Slack Alerts -->
+          <div class="alert-section">
+            <div class="alert-header">
+              <mat-slide-toggle formControlName="slackAlertsEnabled">
+                <mat-icon>chat_bubble</mat-icon>
+                Slack Alerts
+              </mat-slide-toggle>
+              <button mat-button type="button" (click)="testAlert('Slack')" 
+                      [disabled]="!alertForm.get('slackAlertsEnabled')?.value">
+                Test
+              </button>
+            </div>
+            <p class="alert-description">
+              Receive alerts in your Slack workspace via webhook integration.
+            </p>
+            <mat-form-field appearance="outline" class="full-width" 
+                            *ngIf="alertForm.get('slackAlertsEnabled')?.value">
+              <mat-label>Slack Webhook URL</mat-label>
+              <input matInput formControlName="slackWebhookUrl" 
+                     placeholder="https://hooks.slack.com/services/...">
+              <mat-hint>
+                <a href="https://api.slack.com/messaging/webhooks" target="_blank">
+                  How to create a Slack webhook
+                </a>
+              </mat-hint>
+            </mat-form-field>
+          </div>
+
+          <!-- Teams Alerts -->
+          <div class="alert-section">
+            <div class="alert-header">
+              <mat-slide-toggle formControlName="teamsAlertsEnabled">
+                <mat-icon>groups</mat-icon>
+                Microsoft Teams Alerts
+              </mat-slide-toggle>
+              <button mat-button type="button" (click)="testAlert('Teams')" 
+                      [disabled]="!alertForm.get('teamsAlertsEnabled')?.value">
+                Test
+              </button>
+            </div>
+            <p class="alert-description">
+              Receive alerts in Microsoft Teams via webhook integration.
+            </p>
+            <mat-form-field appearance="outline" class="full-width" 
+                            *ngIf="alertForm.get('teamsAlertsEnabled')?.value">
+              <mat-label>Teams Webhook URL</mat-label>
+              <input matInput formControlName="teamsWebhookUrl" 
+                     placeholder="https://your-teams-webhook-url">
+              <mat-hint>
+                <a href="https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook" target="_blank">
+                  How to create a Teams webhook
+                </a>
+              </mat-hint>
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit" 
+                    [disabled]="alertForm.invalid || alertLoading">
+              <mat-spinner diameter="20" *ngIf="alertLoading"></mat-spinner>
+              <span *ngIf="!alertLoading">Save Alert Preferences</span>
+              <span *ngIf="alertLoading">Saving...</span>
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Account Information -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>Account Information</mat-card-title>
+        <mat-card-subtitle>Your account details</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="account-info" *ngIf="currentUser">
+          <div class="info-item">
+            <span class="label">Role:</span>
+            <mat-chip [color]="currentUser.role === 'admin' ? 'primary' : 'accent'">
+              {{ currentUser.role | titlecase }}
+            </mat-chip>
+          </div>
+          <div class="info-item">
+            <span class="label">Member since:</span>
+            <span>Account created</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- API Information -->
+    <mat-card class="settings-card">
+      <mat-card-header>
+        <mat-card-title>API Access</mat-card-title>
+        <mat-card-subtitle>API endpoints and documentation</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="api-info">
+          <div class="info-item">
+            <span class="label">API Base URL:</span>
+            <code>{{ getApiUrl() }}</code>
+          </div>
+          <div class="info-item">
+            <span class="label">Documentation:</span>
+            <a [href]="getApiUrl() + '/docs'" target="_blank" mat-button color="primary">
+              <mat-icon>description</mat-icon>
+              View API Docs
+            </a>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

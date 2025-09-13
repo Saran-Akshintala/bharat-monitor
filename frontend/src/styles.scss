@@ -1,0 +1,255 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Custom Material Theme Colors */
+:root {
+  --primary-color: #1976d2;
+  --accent-color: #ff4081;
+  --warn-color: #f44336;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --info-color: #2196f3;
+}
+
+/* Status Colors */
+.status-up {
+  color: var(--success-color) !important;
+}
+
+.status-down {
+  color: var(--warn-color) !important;
+}
+
+.status-degraded {
+  color: var(--warning-color) !important;
+}
+
+.bg-status-up {
+  background-color: var(--success-color) !important;
+  color: white !important;
+}
+
+.bg-status-down {
+  background-color: var(--warn-color) !important;
+  color: white !important;
+}
+
+.bg-status-degraded {
+  background-color: var(--warning-color) !important;
+  color: white !important;
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.mb-1 {
+  margin-bottom: 8px !important;
+}
+
+.mb-2 {
+  margin-bottom: 16px !important;
+}
+
+.mb-3 {
+  margin-bottom: 24px !important;
+}
+
+.mt-1 {
+  margin-top: 8px !important;
+}
+
+.mt-2 {
+  margin-top: 16px !important;
+}
+
+.mt-3 {
+  margin-top: 24px !important;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Loading Spinner */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+/* Card Hover Effects */
+.mat-mdc-card:hover {
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Responsive Grid */
+.responsive-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Dashboard Stats Cards */
+.stats-card {
+  text-align: center;
+  padding: 20px;
+}
+
+.stats-card .stat-number {
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin: 0;
+}
+
+.stats-card .stat-label {
+  font-size: 0.9rem;
+  color: rgba(0,0,0,0.6);
+  margin-top: 8px;
+}
+
+/* Monitor Status Indicators */
+.status-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-indicator.up {
+  background-color: var(--success-color);
+}
+
+.status-indicator.down {
+  background-color: var(--warn-color);
+}
+
+.status-indicator.degraded {
+  background-color: var(--warning-color);
+}
+
+/* Form Styles */
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-row .mat-mdc-form-field {
+  flex: 1;
+}
+
+/* Table Styles */
+.data-table {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.data-table .mat-mdc-header-cell {
+  font-weight: 500;
+}
+
+/* Navigation */
+.main-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-spacer {
+  flex: 1 1 auto;
+}
+
+/* Sidebar */
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 250px;
+}
+
+.sidenav .mat-mdc-list-item {
+  height: 48px;
+}
+
+.sidenav .mat-mdc-list-item.active {
+  background-color: rgba(0,0,0,0.04);
+}
+
+/* Chart Container */
+.chart-container {
+  position: relative;
+  height: 300px;
+  margin: 20px 0;
+}
+
+/* Alert Styles */
+.alert {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  border-color: #ffeaa7;
+  color: #856404;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+  color: #0c5460;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .responsive-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .stats-card .stat-number {
+    font-size: 2rem;
+  }
+  
+  .sidenav {
+    width: 200px;
+  }
+}

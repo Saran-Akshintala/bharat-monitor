@@ -1,0 +1,185 @@
+<div class="monitor-details-container" *ngIf="monitor">
+  <div class="details-header">
+    <div class="header-info">
+      <h1>{{ monitor.name }}</h1>
+      <div class="monitor-status">
+        <mat-icon [ngClass]="getStatusClass(monitor.currentStatus)">
+          {{ getStatusIcon(monitor.currentStatus) }}
+        </mat-icon>
+        <span [ngClass]="getStatusClass(monitor.currentStatus)">
+          {{ monitor.currentStatus | titlecase }}
+        </span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-button (click)="openUrl()">
+        <mat-icon>open_in_new</mat-icon>
+        Visit Site
+      </button>
+      <button mat-button (click)="editMonitor()">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+      <button mat-button (click)="refresh()" [disabled]="loading">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+      <button mat-button color="warn" (click)="deleteMonitor()">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Monitor Info Card -->
+  <mat-card class="info-card">
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">URL:</span>
+          <a [href]="monitor.url" target="_blank" class="url-link">
+            {{ monitor.url }}
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+        </div>
+        <div class="info-item">
+          <span class="label">Type:</span>
+          <mat-chip [color]="monitor.type === 'website' ? 'primary' : 'accent'">
+            {{ monitor.type | titlecase }}
+          </mat-chip>
+        </div>
+        <div class="info-item">
+          <span class="label">Check Interval:</span>
+          <span>{{ monitor.checkInterval }} minutes</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Last Checked:</span>
+          <span>{{ formatDate(monitor.lastCheckedAt) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Response Time:</span>
+          <span>{{ monitor.responseTime }}ms</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Uptime:</span>
+          <span class="uptime-value">{{ formatUptime(monitor.uptimePercentage) }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Statistics Section -->
+  <div class="stats-section" *ngIf="monitorStats">
+    <div class="stats-header">
+      <h2>Statistics</h2>
+      <mat-form-field appearance="outline" class="period-selector">
+        <mat-label>Period</mat-label>
+        <mat-select [(value)]="selectedPeriod" (selectionChange)="onPeriodChange()">
+          <mat-option *ngFor="let option of periodOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-number">{{ monitorStats.stats.totalChecks }}</div>
+          <div class="stat-label">Total Checks</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card up-card">
+        <mat-card-content>
+          <div class="stat-number status-up">{{ monitorStats.stats.upChecks }}</div>
+          <div class="stat-label">Successful</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card down-card">
+        <mat-card-content>
+          <div class="stat-number status-down">{{ monitorStats.stats.downChecks }}</div>
+          <div class="stat-label">Failed</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-number">{{ monitorStats.stats.avgResponseTime }}ms</div>
+          <div class="stat-label">Avg Response Time</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-number">{{ formatUptime(monitorStats.stats.uptimePercentage) }}</div>
+          <div class="stat-label">Uptime</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Response Time Chart -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Response Time History</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="statsLoading" class="loading-container">
+          <mat-spinner></mat-spinner>
+        </div>
+        <div *ngIf="!statsLoading" class="chart-container">
+          <canvas baseChart
+                  [data]="chartData"
+                  [type]="chartType"
+                  [options]="chartOptions">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Recent Logs -->
+  <mat-card class="logs-card">
+    <mat-card-header>
+      <mat-card-title>Recent Check History</mat-card-title>
+      <mat-card-subtitle>Last 50 checks</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="recentLogs.length === 0" class="no-logs">
+        <mat-icon>history</mat-icon>
+        <p>No check history available yet</p>
+      </div>
+      
+      <div *ngIf="recentLogs.length > 0" class="logs-list">
+        <div *ngFor="let log of recentLogs" class="log-item">
+          <div class="log-status">
+            <mat-icon [ngClass]="getLogStatusClass(log.status)">
+              {{ getStatusIcon(log.status) }}
+            </mat-icon>
+          </div>
+          <div class="log-info">
+            <div class="log-time">{{ formatDate(log.checkedAt) }}</div>
+            <div class="log-details">
+              <span class="response-time">{{ log.responseTime }}ms</span>
+              <span *ngIf="log.statusCode" class="status-code">HTTP {{ log.statusCode }}</span>
+              <span *ngIf="log.errorMessage" class="error-message">{{ log.errorMessage }}</span>
+            </div>
+          </div>
+          <div class="log-status-text">
+            <span [ngClass]="getLogStatusClass(log.status)">
+              {{ log.status | titlecase }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-container">
+  <mat-spinner></mat-spinner>
+  <p>Loading monitor details...</p>
+</div>

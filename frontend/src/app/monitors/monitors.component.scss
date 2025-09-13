@@ -1,0 +1,183 @@
+.monitors-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.monitors-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.monitors-header h1 {
+  margin: 0;
+  color: #333;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.monitors-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.search-field {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.monitors-table {
+  width: 100%;
+  min-width: 800px;
+}
+
+.status-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-text {
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.monitor-name {
+  font-weight: 500;
+}
+
+.type-chip {
+  font-size: 10px;
+  height: 20px;
+  line-height: 20px;
+}
+
+.url-link {
+  color: #1976d2;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.url-link:hover {
+  text-decoration: underline;
+}
+
+.external-link {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.uptime-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 80px;
+}
+
+.uptime-percentage {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.uptime-bar {
+  height: 4px;
+  border-radius: 2px;
+}
+
+.monitor-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.monitor-row:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.delete-action {
+  color: #f44336;
+}
+
+.no-data {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.no-data mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.no-data h3 {
+  margin: 16px 0 8px 0;
+  color: #333;
+}
+
+.no-data p {
+  margin-bottom: 24px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .monitors-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .search-field {
+    max-width: 100%;
+  }
+
+  .monitors-table {
+    min-width: 600px;
+  }
+
+  .url-link {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .no-data {
+    padding: 40px 16px;
+  }
+
+  .no-data mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}

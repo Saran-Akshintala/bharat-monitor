@@ -1,0 +1,134 @@
+<div class="monitor-form-container">
+  <div class="form-header">
+    <h1>{{ isEditMode ? 'Edit Monitor' : 'Create New Monitor' }}</h1>
+    <div class="header-actions">
+      <button mat-button (click)="cancel()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="testConnection()" [disabled]="loading || monitorForm.invalid">
+        <mat-icon>wifi_tethering</mat-icon>
+        Test Connection
+      </button>
+    </div>
+  </div>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <form [formGroup]="monitorForm" (ngSubmit)="onSubmit()">
+        <!-- Basic Information -->
+        <div class="form-section">
+          <h3>Basic Information</h3>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Monitor Name</mat-label>
+              <input matInput formControlName="name" placeholder="Enter monitor name">
+              <mat-error *ngIf="monitorForm.get('name')?.invalid && monitorForm.get('name')?.touched">
+                {{ getErrorMessage('name') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Monitor Type</mat-label>
+              <mat-select formControlName="type">
+                <mat-option *ngFor="let type of monitorTypes" [value]="type.value">
+                  {{ type.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>URL</mat-label>
+            <input matInput formControlName="url" placeholder="https://example.com">
+            <mat-icon matSuffix>link</mat-icon>
+            <mat-error *ngIf="monitorForm.get('url')?.invalid && monitorForm.get('url')?.touched">
+              {{ getErrorMessage('url') }}
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Check Interval (minutes)</mat-label>
+              <input matInput type="number" formControlName="checkInterval" min="1" max="60">
+              <mat-hint>How often to check (1-60 minutes)</mat-hint>
+              <mat-error *ngIf="monitorForm.get('checkInterval')?.invalid && monitorForm.get('checkInterval')?.touched">
+                {{ getErrorMessage('checkInterval') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Timeout (milliseconds)</mat-label>
+              <input matInput type="number" formControlName="timeout" min="1000" max="120000">
+              <mat-hint>Request timeout (1000-120000ms)</mat-hint>
+              <mat-error *ngIf="monitorForm.get('timeout')?.invalid && monitorForm.get('timeout')?.touched">
+                {{ getErrorMessage('timeout') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- HTTP Configuration (for API type) -->
+        <div class="form-section" *ngIf="isApiType()">
+          <h3>HTTP Configuration</h3>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>HTTP Method</mat-label>
+            <mat-select formControlName="httpMethod">
+              <mat-option *ngFor="let method of httpMethods" [value]="method">
+                {{ method }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>HTTP Headers (JSON format)</mat-label>
+            <textarea matInput formControlName="httpHeaders" rows="4" 
+                      placeholder='{"Authorization": "Bearer token", "Content-Type": "application/json"}'></textarea>
+            <mat-hint>Optional: Enter headers in JSON format or key:value format (one per line)</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width" 
+                          *ngIf="monitorForm.get('httpMethod')?.value !== 'GET' && monitorForm.get('httpMethod')?.value !== 'HEAD'">
+            <mat-label>Request Body</mat-label>
+            <textarea matInput formControlName="httpBody" rows="4" 
+                      placeholder='{"key": "value"}'></textarea>
+            <mat-hint>Optional: Request body for POST/PUT/PATCH requests</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Expected Status Codes -->
+        <div class="form-section">
+          <h3>Expected Status Codes</h3>
+          <p class="section-description">
+            The monitor will be considered "UP" if the response status code matches any of these values.
+          </p>
+          
+          <div class="status-codes-container">
+            <mat-chip-listbox>
+              <mat-chip-option selected>200</mat-chip-option>
+              <mat-chip-option selected>201</mat-chip-option>
+              <mat-chip-option selected>202</mat-chip-option>
+              <mat-chip-option selected>204</mat-chip-option>
+            </mat-chip-listbox>
+            <button mat-button type="button" (click)="addStatusCode()">
+              <mat-icon>add</mat-icon>
+              Add Custom Code
+            </button>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancel()" [disabled]="loading">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" 
+                  [disabled]="monitorForm.invalid || loading">
+            <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+            <span *ngIf="!loading">{{ isEditMode ? 'Update Monitor' : 'Create Monitor' }}</span>
+            <span *ngIf="loading">{{ isEditMode ? 'Updating...' : 'Creating...' }}</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,192 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="refresh()" [disabled]="loading">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+      <button mat-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading" class="dashboard-content">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <mat-card class="stats-card">
+        <mat-card-content>
+          <div class="stat-number">{{ stats.total }}</div>
+          <div class="stat-label">Total Monitors</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stats-card up-card">
+        <mat-card-content>
+          <div class="stat-number status-up">{{ stats.up }}</div>
+          <div class="stat-label">Up</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stats-card down-card">
+        <mat-card-content>
+          <div class="stat-number status-down">{{ stats.down }}</div>
+          <div class="stat-label">Down</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stats-card">
+        <mat-card-content>
+          <div class="stat-number">{{ stats.uptime.toFixed(1) }}%</div>
+          <div class="stat-label">Average Uptime</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Charts and Monitor List -->
+    <div class="dashboard-grid">
+      <!-- Status Chart -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Monitor Status Distribution</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container" *ngIf="stats.total > 0">
+            <canvas baseChart
+                    [data]="chartData"
+                    [type]="chartType"
+                    [options]="chartOptions">
+            </canvas>
+          </div>
+          <div *ngIf="stats.total === 0" class="no-data">
+            <mat-icon>info</mat-icon>
+            <p>No monitors configured yet</p>
+            <button mat-raised-button color="primary" routerLink="/monitors/new">
+              Add Your First Monitor
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Response Time Chart -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Response Time Overview</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container" *ngIf="monitors.length > 0">
+            <canvas baseChart
+                    [data]="responseTimeChartData"
+                    type="line"
+                    [options]="responseTimeChartOptions">
+            </canvas>
+          </div>
+          <div *ngIf="monitors.length === 0" class="no-data">
+            <mat-icon>timeline</mat-icon>
+            <p>No response time data available</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Monitor List -->
+    <mat-card class="monitors-card">
+      <mat-card-header>
+        <mat-card-title>Monitor Status</mat-card-title>
+        <mat-card-subtitle>Current status of all monitors</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="monitors.length > 0" class="monitors-list">
+          <div *ngFor="let monitor of monitors" class="monitor-item">
+            <div class="monitor-info">
+              <div class="monitor-name">
+                <span class="status-indicator" [ngClass]="getStatusClass(monitor.status)"></span>
+                {{ monitor.name }}
+              </div>
+              <div class="monitor-url">{{ monitor.url }}</div>
+            </div>
+            <div class="monitor-stats">
+              <div class="response-time">{{ monitor.responseTime || 0 }}ms</div>
+              <mat-icon [ngClass]="getStatusClass(monitor.status)">
+                {{ getStatusIcon(monitor.status) }}
+              </mat-icon>
+              <button mat-icon-button (click)="deleteMonitor(monitor.id)" color="warn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="monitors.length === 0" class="no-monitors">
+          <mat-icon>monitor</mat-icon>
+          <p>No monitors found</p>
+          <button mat-button color="primary" routerLink="/monitors/new">
+            Create Monitor
+          </button>
+        </div>
+      </mat-card-content>
+      <mat-card-actions *ngIf="monitors.length > 0">
+        <button mat-button routerLink="/monitors">View All Monitors</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Recent Alerts -->
+    <mat-card class="alerts-card">
+      <mat-card-header>
+        <mat-card-title>Recent Alerts</mat-card-title>
+        <mat-card-subtitle>Latest alert notifications</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="alerts.length > 0" class="alerts-list">
+          <div *ngFor="let alert of alerts" class="alert-item">
+            <div class="alert-info">
+              <div class="alert-message">{{ alert.message }}</div>
+              <div class="alert-monitor">{{ alert.monitorName }}</div>
+            </div>
+            <div class="alert-meta">
+              <div class="alert-time">{{ alert.createdAt | date:'short' }}</div>
+              <span class="alert-status" [ngClass]="'alert-' + alert.status">
+                {{ alert.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="alerts.length === 0" class="no-alerts">
+          <mat-icon>notifications_none</mat-icon>
+          <p>No recent alerts</p>
+        </div>
+      </mat-card-content>
+      <mat-card-actions *ngIf="alerts.length > 0">
+        <button mat-button routerLink="/alerts">View All Alerts</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Quick Actions -->
+    <mat-card class="actions-card">
+      <mat-card-header>
+        <mat-card-title>Quick Actions</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="actions-grid">
+          <button mat-raised-button color="primary" routerLink="/monitors/new">
+            <mat-icon>add</mat-icon>
+            Add Monitor
+          </button>
+          <button mat-raised-button routerLink="/alert-settings">
+            <mat-icon>settings</mat-icon>
+            Alert Settings
+          </button>
+          <button mat-raised-button routerLink="/reports">
+            <mat-icon>assessment</mat-icon>
+            Generate Report
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

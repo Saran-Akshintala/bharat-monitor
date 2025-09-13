@@ -1,0 +1,333 @@
+.reports-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.reports-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.reports-header h1 {
+  margin: 0;
+  color: #333;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.period-selector {
+  width: 200px;
+}
+
+.export-card {
+  margin-bottom: 24px;
+}
+
+.export-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.export-actions button {
+  min-width: 150px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.summary-card {
+  margin-bottom: 24px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+}
+
+.summary-item {
+  text-align: center;
+}
+
+.summary-number {
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin-bottom: 8px;
+}
+
+.summary-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.monitors-report-card {
+  margin-bottom: 24px;
+}
+
+.monitors-report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.monitor-report-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  background: #fafafa;
+}
+
+.monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.monitor-info h3 {
+  margin: 0 0 4px 0;
+  color: #333;
+}
+
+.monitor-url {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-badge.status-up {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+.status-badge.status-down {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-badge.status-degraded {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.monitor-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.uptime-progress {
+  background: white;
+  padding: 16px;
+  border-radius: 6px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.recent-activity {
+  background: white;
+  padding: 16px;
+  border-radius: 6px;
+}
+
+.recent-activity h4 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.activity-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.activity-status {
+  flex-shrink: 0;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.activity-status.status-up .status-dot {
+  background-color: #4caf50;
+}
+
+.activity-status.status-down .status-dot {
+  background-color: #f44336;
+}
+
+.activity-status.status-degraded .status-dot {
+  background-color: #ff9800;
+}
+
+.activity-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.activity-time {
+  font-size: 0.85rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.activity-info {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.response-time {
+  font-weight: 500;
+}
+
+.status-code {
+  color: #1976d2;
+}
+
+.error-message {
+  color: #f44336;
+  font-style: italic;
+}
+
+.no-monitors {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.no-monitors mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.no-monitors h3 {
+  margin: 16px 0 8px 0;
+  color: #333;
+}
+
+.no-monitors p {
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .reports-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .period-selector {
+    width: 150px;
+  }
+
+  .export-actions {
+    flex-direction: column;
+  }
+
+  .export-actions button {
+    width: 100%;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .monitor-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .activity-info {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
